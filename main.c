@@ -28,7 +28,6 @@ student_t *createNode();
 void displayList(student_t*);
 void insertNode(student_t**, student_t*);
 
-
 /*
  * 
  * This method is used to run the main application
@@ -53,6 +52,7 @@ int main() {
  * This method is used to create a list of structures of students
  * 
  * @return a pointer to the header of the students list
+ * 
  */
 student_t* createList(){
     // Create the needed method variables
@@ -133,10 +133,10 @@ student_t* createNode(){
                 // Print an error for incorrect input
                 printf("\nOops... That is an invalid GPA value.  Please enter a number between 0 & 100.\n");
                 
-                // Set the GPA to 0 to allow loop to loop again and ask for correct input
-                new_node->gpa = 0;
+                // Set the GPA to -1 to allow loop to loop again and ask for correct input
+                new_node->gpa = -1;
             }
-        } while (new_node->gpa == 0); // Loop while the GPA is 0
+        } while (new_node->gpa == -1); // Loop while the GPA is 0
 
         // Set the new_node next structure to NULL
         new_node->next = NULL;
@@ -163,7 +163,7 @@ void displayList(student_t* head) {
     
     // Display table header
     printf("-------------------------------------------\n");
-    printf("%3s. %3s %s\n", "No", "GPA", "Student Name");
+    printf("%3s. %-6s %s\n", "No", "GPA", "Student Name");
     printf("-------------------------------------------\n");
     
     // Check if the head pointer is NULL
