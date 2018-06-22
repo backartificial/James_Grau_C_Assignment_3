@@ -10,6 +10,7 @@
 // Include needed headers
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Define program constants
 #define FLUSH stdin = freopen(NULL, "r", stdin)
@@ -21,7 +22,7 @@ typedef struct node {
     struct node *next;
 } student_t;
 
-// Define method
+// Initialize function Prototypes
 student_t *createList();
 student_t *createNode();
 void displayList(student_t*);
@@ -130,7 +131,7 @@ student_t* createNode(){
             // Check to make sure that the GPA is between 0 & 100
             if (new_node->gpa < 0 || new_node->gpa > 100) {
                 // Print an error for incorrect input
-                printf("\nOops... That is an invalid GPA value.  PLease enter a number between 0 & 100.\n");
+                printf("\nOops... That is an invalid GPA value.  Please enter a number between 0 & 100.\n");
                 
                 // Set the GPA to 0 to allow loop to loop again and ask for correct input
                 new_node->gpa = 0;
@@ -161,17 +162,23 @@ void displayList(student_t* head) {
     register int i = 1; // Store the iteration counter into the register
     
     // Display table header
-    printf("-------------------------------------------");
-    printf("%3s. %9s %s\n", "No.", "GPA", "Student Name");
-    printf("-------------------------------------------");
+    printf("-------------------------------------------\n");
+    printf("%3s. %3s %s\n", "No", "GPA", "Student Name");
+    printf("-------------------------------------------\n");
     
-    // Loop while the current student pointer is not NULL
-    while(current != NULL) {
-        // Print out the list with the student information
-        printf("%3d. %6.2f %s\n", i++, current->gpa, current->name);
-        
-        // Move the current pointer to the next student
-        current = current->next;
+    // Check if the head pointer is NULL
+    if(head == NULL) {
+        // Print a message display that the list of students is empty
+        printf("Students list is empty.\n");
+    }else{
+        // Loop while the current student pointer is not NULL
+        while(current != NULL) {
+            // Print out the list with the student information
+            printf("%3d. %6.2f %s\n", i++, current->gpa, current->name);
+
+            // Move the current pointer to the next student
+            current = current->next;
+        }
     }
 }
 
