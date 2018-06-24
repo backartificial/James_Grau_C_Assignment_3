@@ -59,7 +59,7 @@ student_t* createList(){
     student_t *new_node = NULL, *current = NULL, *head = NULL;
 
     // Loop through and initialize the list of student_t nodes
-    while ((new_node = createNode()) != NULL) {
+    while((new_node = createNode()) != NULL) {
         // Check to see if the current student pointer is NULL
         if(current == NULL) {
             // Set the head to the created new node
@@ -68,11 +68,35 @@ student_t* createList(){
             // Set the current to new node
             current = new_node;
         }else{
-            // Set the current student pointers next pointer to the new_node address
-            current->next = new_node;
+            // Set the current student pointer the the head pointer
+            current = head;
             
-            // Set the current student pointer to the new_node
-            current = new_node;
+            // Check if the new_node GPA is greater then the 
+            if(new_node->gpa > current->gpa) {                
+                // Set the new_node next pointer to point to the head
+                new_node->next = head;
+                
+                // Set the head to the new_node
+                head = new_node;
+            }else{
+                // Loop through the linked list and check where the new_node GPA is less than the current GPA
+                while((new_node->gpa < current->gpa) && current->next != NULL) {
+                    // Point to the next item in the linked list
+                    current = current->next;
+                }
+
+                // Check if the current next pointer is not NULL
+                if(current->next != NULL) {
+                    // Set the new_node next pointer to point to the current next pointer
+                    new_node->next = current->next;
+                    
+                    // Set the current next pointer to the new_node
+                    current->next = new_node;
+                }else{
+                    // Set the current student pointers next pointer to the new_node address
+                    current->next = new_node;
+                }                
+            }
         }
     };
     
@@ -101,10 +125,13 @@ student_t* createNode(){
     } 
 
     // Prompt user to enter students name
-    printf("Please Enter Students Name: ");
+    printf("Please Enter Student's Name: ");
     
     // Get the input from stdin and store it into the new_node name
     fgets(new_node->name, sizeof(new_node->name), stdin);
+    
+    // Flush the input buffer
+    FLUSH;
     
     // Remove '\n' from the input and set it to a NULL terminating character
     new_node->name[strcspn(new_node->name, "\n")] = '\0';
@@ -120,7 +147,7 @@ student_t* createNode(){
         // Perform a loop to get the students GPA
         do {
             // Prompt the user to enter the GPA
-            printf("Please Enter Students GPA: ");
+            printf("Please Enter Student's GPA (0-100): ");
             
             // Get the GPA input and store it to the new_node
             scanf("%f", &new_node->gpa);
@@ -131,7 +158,7 @@ student_t* createNode(){
             // Check to make sure that the GPA is between 0 & 100
             if (new_node->gpa < 0 || new_node->gpa > 100) {
                 // Print an error for incorrect input
-                printf("\nOops... That is an invalid GPA value.  Please enter a number between 0 & 100.\n");
+                printf("\nOops... Thats is an invalid GPA number.  Please enter a number between 0 & 100.\n");
                 
                 // Set the GPA to -1 to allow loop to loop again and ask for correct input
                 new_node->gpa = -1;
@@ -162,6 +189,7 @@ void displayList(student_t* head) {
     register int i = 1; // Store the iteration counter into the register
     
     // Display table header
+    printf("================= List of Students: =================\n");
     printf("-------------------------------------------\n");
     printf("%3s. %-6s %s\n", "No", "GPA", "Student Name");
     printf("-------------------------------------------\n");
@@ -169,7 +197,7 @@ void displayList(student_t* head) {
     // Check if the head pointer is NULL
     if(head == NULL) {
         // Print a message display that the list of students is empty
-        printf("Students list is empty.\n");
+        printf("List of students is empty.\n");
     }else{
         // Loop while the current student pointer is not NULL
         while(current != NULL) {
@@ -181,4 +209,3 @@ void displayList(student_t* head) {
         }
     }
 }
-
