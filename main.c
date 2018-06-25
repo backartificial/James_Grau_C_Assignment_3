@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // Define program constants
 #define FLUSH stdin = freopen(NULL, "r", stdin)
@@ -80,7 +81,7 @@ student_t* createList(){
                 head = new_node;
             }else{
                 // Loop through the linked list and check where the new_node GPA is less than the current GPA
-                while((new_node->gpa < current->gpa) && current->next != NULL) {
+                while(current->next != NULL && (new_node->gpa < current->gpa && new_node->gpa < current->next->gpa)) {                    
                     // Point to the next item in the linked list
                     current = current->next;
                 }
@@ -114,64 +115,74 @@ student_t* createList(){
 student_t* createNode(){
     // Create the needed method variables
     student_t* new_node = (student_t*)malloc(1 * sizeof(student_t));
- 
-    // Check to see if the new_node could be initialized on the heap
-    if (new_node == NULL) {
-        // Display error message
-        printf("Memory cannot be allocated.\n");
-        
-        // Exit the application on error
-        exit(-1);
-    } 
+    bool done = false;
+    
+    do {
+        // Check to see if the new_node could be initialized on the heap
+        if (new_node == NULL) {
+            // Display error message
+            printf("Memory cannot be allocated.\n");
 
-    // Prompt user to enter students name
-    printf("Please Enter Student's Name: ");
+            // Exit the application on error
+            exit(-1);
+        } 
     
-    // Get the input from stdin and store it into the new_node name
-    fgets(new_node->name, sizeof(new_node->name), stdin);
-    
-    // Flush the input buffer
-    FLUSH;
-    
-    // Remove '\n' from the input and set it to a NULL terminating character
-    new_node->name[strcspn(new_node->name, "\n")] = '\0';
-    
-    // Check to see if the string length of the students name is less then 1
-    if (strlen(new_node->name) < 1) {
-        // Free the new_node from the stack
-        free(new_node);
-        
-        // Set the new_node to NULL
-        new_node = NULL;
-    }else{        
-        // Perform a loop to get the students GPA
-        do {
+        // Prompt user to enter students name
+        printf("Insert student's Name: ");
+
+        // Get the input from stdin and store it into the new_node name
+        fgets(new_node->name, sizeof(new_node->name), stdin);
+
+        // Flush the input buffer
+        FLUSH;
+
+        // Remove '\n' from the input and set it to a NULL terminating character
+        new_node->name[strcspn(new_node->name, "\n")] = '\0';
+
+        // Check to see if the string length of the students name is less then 1
+        if (strlen(new_node->name) < 1) {
+            // Free the new_node from the stack
+            free(new_node);
+
+            // Set the new_node to NULL
+            new_node = NULL;
+            
+            // Set the done flag to true
+            done = true;
+        }else{
+            // Create a tmp variable (gpa) to hold the input of the GPA
+            char gpa[10];
+
             // Prompt the user to enter the GPA
-            printf("Please Enter Student's GPA (0-100): ");
-            
+            printf("Insert student's GPA (0-100): ");
+
             // Get the GPA input and store it to the new_node
-            scanf("%f", &new_node->gpa);
-            
+            fgets(gpa, sizeof(gpa), stdin);
+
             // Flush Input buffer
             FLUSH;
-            
+
             // Check to make sure that the GPA is between 0 & 100
-            if (new_node->gpa < 0 || new_node->gpa > 100) {
+            if ((new_node->gpa = (float)strtof(gpa, NULL)) == 0 || (new_node->gpa < 0 || new_node->gpa > 100)) { 
                 // Print an error for incorrect input
-                printf("\nOops... Thats is an invalid GPA number.  Please enter a number between 0 & 100.\n");
+                printf("\nIncorrect value of GPA! Ignoring the record input\n");
                 
-                // Set the GPA to -1 to allow loop to loop again and ask for correct input
-                new_node->gpa = -1;
+                // Set the new_node to a new student structure
+                new_node = (student_t*)malloc(1 * sizeof(student_t));
+            }else{
+                // Set the new_node next structure to NULL
+                new_node->next = NULL;
+                
+                // Set the done flag to true
+                done = true;
             }
-        } while (new_node->gpa == -1); // Loop while the GPA is 0
+        }
 
-        // Set the new_node next structure to NULL
-        new_node->next = NULL;
-    }
+        // Print a blank new line
+        printf("\n");
 
-    // Print a blank new line
-    printf("\n");
-
+    } while(done == false);
+        
     // Return the pointer to the new node
     return new_node;
 }
@@ -189,10 +200,10 @@ void displayList(student_t* head) {
     register int i = 1; // Store the iteration counter into the register
     
     // Display table header
-    printf("================= List of Students: =================\n");
-    printf("-------------------------------------------\n");
+    printf("===== List of Students: =====\n");
+    printf("-----------------------\n");
     printf("%3s. %-6s %s\n", "No", "GPA", "Student Name");
-    printf("-------------------------------------------\n");
+    printf("-----------------------\n");
     
     // Check if the head pointer is NULL
     if(head == NULL) {
