@@ -18,7 +18,7 @@
 
 // Define student structure
 typedef struct node {
-    char name[30];
+    char *name;
     float gpa;
     struct node *next;
 } student_t;
@@ -116,7 +116,9 @@ student_t* createNode(){
     // Create the needed method variables
     student_t* new_node = (student_t*)malloc(1 * sizeof(student_t));
     bool done = false;
+    char tmp[100]; // Create a tmp variable (gpa) to hold the input of the GPA
     
+    // Loop through and make sure that there is correct input
     do {
         // Check to see if the new_node could be initialized on the heap
         if (new_node == NULL) {
@@ -129,15 +131,21 @@ student_t* createNode(){
     
         // Prompt user to enter students name
         printf("Insert student's Name: ");
-
-        // Get the input from stdin and store it into the new_node name
-        fgets(new_node->name, sizeof(new_node->name), stdin);
-
+        
+        // Get the input from stdin and store it into the tmp variable
+        fgets(tmp, 100 * sizeof(char), stdin);
+        
         // Flush the input buffer
         FLUSH;
+        
+        // Replace the '\n' character with a NULL terminator
+        tmp[strcspn(tmp, "\n")] = '\0';
 
-        // Remove '\n' from the input and set it to a NULL terminating character
-        new_node->name[strcspn(new_node->name, "\n")] = '\0';
+        // Allocate the city name and assign it to the new_node name reference
+        new_node->name = (char*)calloc(1, (strlen(tmp) + 1) * sizeof(char));
+        
+        // Copy the string to new_node
+        strncpy(new_node->name, tmp, (strlen(tmp) + 1));        
 
         // Check to see if the string length of the students name is less then 1
         if (strlen(new_node->name) < 1) {
@@ -150,20 +158,17 @@ student_t* createNode(){
             // Set the done flag to true
             done = true;
         }else{
-            // Create a tmp variable (gpa) to hold the input of the GPA
-            char gpa[10];
-
             // Prompt the user to enter the GPA
             printf("Insert student's GPA (0-100): ");
 
             // Get the GPA input and store it to the new_node
-            fgets(gpa, sizeof(gpa), stdin);
+            fgets(tmp, sizeof(tmp), stdin);
 
             // Flush Input buffer
             FLUSH;
 
             // Check to make sure that the GPA is between 0 & 100
-            if ((new_node->gpa = (float)strtof(gpa, NULL)) == 0 || (new_node->gpa < 0 || new_node->gpa > 100)) { 
+            if ((new_node->gpa = (float)strtof(tmp, NULL)) == 0 || (new_node->gpa < 0 || new_node->gpa > 100)) { 
                 // Print an error for incorrect input
                 printf("\nIncorrect value of GPA! Ignoring the record input\n");
                 
